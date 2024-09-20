@@ -228,10 +228,12 @@ class DayView<T extends Object?> extends StatefulWidget {
 
   /// Flag to keep scrollOffset of pages on page change
   final bool keepScrollOffset;
+  final List<EventGroup> eventGroups;
 
   /// Main widget for day view.
   const DayView({
     Key? key,
+    required this.eventGroups,
     this.eventTileBuilder,
     this.dateStringBuilder,
     this.timeStringBuilder,
@@ -463,6 +465,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                           builder: (_, __, ___) => InternalDayViewPage<T>(
                             key: ValueKey(
                                 _hourHeight.toString() + date.toString()),
+                            eventGroups: widget.eventGroups,
                             width: _width,
                             liveTimeIndicatorSettings:
                                 _liveTimeIndicatorSettings,

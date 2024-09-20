@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../calendar_view.dart';
 import '../components/_internal_components.dart';
 import '../components/event_scroll_notifier.dart';
 import '../enumerations.dart';
@@ -132,10 +133,12 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
 
   /// Flag to keep scrollOffset of pages on page change
   final bool keepScrollOffset;
+  final List<EventGroup> eventGroups;
 
   /// Defines a single day page.
   const InternalDayViewPage({
     Key? key,
+    required this.eventGroups,
     required this.showVerticalLine,
     required this.width,
     required this.date,
@@ -281,36 +284,75 @@ class _InternalDayViewPageState<T extends Object?>
                               .quarterHourIndicatorSettings.dashSpaceWidth,
                         ),
                       ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        width: widget.width -
+                            widget.timeLineWidth -
+                            widget.hourIndicatorSettings.offset -
+                            widget.verticalLineOffset,
+                        child: PageView.builder(
+                          itemCount: widget.eventGroups.length,
+                          itemBuilder: (context, index) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                EventGenerator<T>(
+                                  height: widget.height,
+                                  date: widget.date,
+                                  onTileLongTap: widget.onTileLongTap,
+                                  onTileDoubleTap: widget.onTileDoubleTap,
+                                  onTileTap: widget.onTileTap,
+                                  eventArranger: widget.eventArranger,
+                                  events: widget.controller.getEventsOnDay(
+                                    widget.date,
+                                    includeFullDayEvents: false,
+                                  ),
+                                  heightPerMinute: widget.heightPerMinute,
+                                  eventTileBuilder: widget.eventTileBuilder,
+                                  scrollNotifier: widget.scrollNotifier,
+                                  startHour: widget.startHour,
+                                  endHour: widget.endHour,
+                                  width: (widget.width -
+                                          widget.timeLineWidth -
+                                          widget.hourIndicatorSettings.offset -
+                                          widget.verticalLineOffset) /
+                                      2,
+                                ),
+                                EventGenerator<T>(
+                                  height: widget.height,
+                                  date: widget.date,
+                                  onTileLongTap: widget.onTileLongTap,
+                                  onTileDoubleTap: widget.onTileDoubleTap,
+                                  onTileTap: widget.onTileTap,
+                                  eventArranger: widget.eventArranger,
+                                  events: widget.controller.getEventsOnDay(
+                                    widget.date,
+                                    includeFullDayEvents: false,
+                                  ),
+                                  heightPerMinute: widget.heightPerMinute,
+                                  eventTileBuilder: widget.eventTileBuilder,
+                                  scrollNotifier: widget.scrollNotifier,
+                                  startHour: widget.startHour,
+                                  endHour: widget.endHour,
+                                  width: (widget.width -
+                                          widget.timeLineWidth -
+                                          widget.hourIndicatorSettings.offset -
+                                          widget.verticalLineOffset) /
+                                      2,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                     widget.dayDetectorBuilder(
                       width: widget.width,
                       height: widget.height,
                       heightPerMinute: widget.heightPerMinute,
                       date: widget.date,
                       minuteSlotSize: widget.minuteSlotSize,
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: EventGenerator<T>(
-                        height: widget.height,
-                        date: widget.date,
-                        onTileLongTap: widget.onTileLongTap,
-                        onTileDoubleTap: widget.onTileDoubleTap,
-                        onTileTap: widget.onTileTap,
-                        eventArranger: widget.eventArranger,
-                        events: widget.controller.getEventsOnDay(
-                          widget.date,
-                          includeFullDayEvents: false,
-                        ),
-                        heightPerMinute: widget.heightPerMinute,
-                        eventTileBuilder: widget.eventTileBuilder,
-                        scrollNotifier: widget.scrollNotifier,
-                        startHour: widget.startHour,
-                        endHour: widget.endHour,
-                        width: widget.width -
-                            widget.timeLineWidth -
-                            widget.hourIndicatorSettings.offset -
-                            widget.verticalLineOffset,
-                      ),
                     ),
                     TimeLine(
                       height: widget.height,

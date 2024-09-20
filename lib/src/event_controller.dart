@@ -156,7 +156,7 @@ class EventController<T extends Object?> extends ChangeNotifier {
       notifyListeners();
     }
   }
-  //#endregion
+//#endregion
 }
 
 /// Stores the list of the calendar events.
@@ -166,6 +166,7 @@ class EventController<T extends Object?> extends ChangeNotifier {
 /// Exposes methods to manipulate stored data.
 ///
 ///
+
 class CalendarData<T extends Object?> {
   /// Creates a new instance of [CalendarData].
   CalendarData({
@@ -205,6 +206,7 @@ class CalendarData<T extends Object?> {
   /// Events that occurs on multiple day from startDate to endDate.
   ///
   final _rangingEventList = <CalendarEventData<T>>[];
+
   UnmodifiableListView<CalendarEventData<T>> get rangingEventList =>
       UnmodifiableListView(_rangingEventList);
 
@@ -214,6 +216,7 @@ class CalendarData<T extends Object?> {
   ///
   ///
   final _fullDayEventList = <CalendarEventData<T>>[];
+
   UnmodifiableListView<CalendarEventData<T>> get fullDayEventList =>
       UnmodifiableListView(_fullDayEventList);
 
@@ -309,6 +312,7 @@ class CalendarData<T extends Object?> {
     removeEvent(oldEvent);
     addEvent(newEvent);
   }
+
   //#endregion
 
   //#region Data Fetch Methods
@@ -344,5 +348,45 @@ class CalendarData<T extends Object?> {
     }
     return events;
   }
-  //#endregion
+//#endregion
+}
+
+class CalendarGroupData<T extends Object?> extends CalendarData {
+  final _eventGroups = <EventGroup>[];
+
+  UnmodifiableListView<EventGroup> get eventGroups =>
+      UnmodifiableListView(_eventGroups);
+
+  void addEventGroup(EventGroup eventGroup) {
+    _eventGroups.add(eventGroup);
+  }
+
+  void removeEventGroup(EventGroup eventGroup) {
+    _eventGroups.remove(eventGroup);
+  }
+
+  void removeWhereGroup(TestPredicate<EventGroup> test) {
+    _eventGroups.removeWhere(test);
+  }
+
+  List<CalendarEventData<T>> dayEventFromGroup(int index, DateTime date) {
+    final events = <CalendarEventData<T>>[];
+    final eventGroup = _eventGroups[index];
+    final dayEvents = getEventsOnDay(date);
+
+    for (var element in dayEvents) {
+      if (element.event == eventGroup.id) {
+        events.add(element as CalendarEventData<T>); // Приведение типа
+      }
+    }
+
+    return events;
+  }
+
+  void updateEventGroup(EventGroup oldEventGroup, EventGroup newEventGroup) {
+    final index = _eventGroups.indexOf(oldEventGroup);
+    if (index != -1) {
+      _eventGroups[index] = newEventGroup;
+    }
+  }
 }

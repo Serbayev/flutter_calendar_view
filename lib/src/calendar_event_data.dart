@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 
 import '../calendar_view.dart';
 
-@immutable
-
 /// {@macro calendar_event_data_doc}
 class CalendarEventData<T extends Object?> {
   /// Specifies date on which all these events are.
@@ -208,3 +206,13 @@ class CalendarEventData<T extends Object?> {
 /// [AssertionError] in debug mode and will be ignored in release mode
 /// in [DayView] and [WeekView].
 /// {@endtemplate}
+
+class EventGroup {
+  EventGroup({
+    required this.title,
+    required this.id,
+  });
+
+  final int id;
+  final String title;
+}

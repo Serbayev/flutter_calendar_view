@@ -29,7 +29,7 @@ class EventController<T extends Object?> extends ChangeNotifier {
     /// By default, events are sorted in a start time wise order.
     EventSorter<T>? eventSorter,
   })  : _eventFilter = eventFilter,
-        _calendarData = CalendarData(eventSorter: eventSorter);
+        _calendarData = CalendarGroupData();
 
   //#region Private Fields
   EventFilter<T>? _eventFilter;
@@ -81,6 +81,10 @@ class EventController<T extends Object?> extends ChangeNotifier {
       _calendarData.addEvent(event);
     }
     notifyListeners();
+  }
+
+  void addAllEventGroups(List<EventGroup> groups) {
+    (_calendarData as CalendarGroupData<T>).addAllEventGroups(groups);
   }
 
   /// Adds a single event in [_events]
@@ -141,6 +145,9 @@ class EventController<T extends Object?> extends ChangeNotifier {
     return _calendarData.getEventsOnDay(date.withoutTime,
         includeFullDayEvents: includeFullDayEvents);
   }
+
+  List<CalendarEventData<T>> getEventsFromGroup(int index, DateTime date) =>
+      (_calendarData as CalendarGroupData<T>).dayEventFromGroup(index, date);
 
   /// Returns full day events on given day.
   List<CalendarEventData<T>> getFullDayEvent(DateTime date) {
@@ -351,7 +358,7 @@ class CalendarData<T extends Object?> {
 //#endregion
 }
 
-class CalendarGroupData<T extends Object?> extends CalendarData {
+class CalendarGroupData<T extends Object?> extends CalendarData<T> {
   final _eventGroups = <EventGroup>[];
 
   UnmodifiableListView<EventGroup> get eventGroups =>
@@ -359,6 +366,10 @@ class CalendarGroupData<T extends Object?> extends CalendarData {
 
   void addEventGroup(EventGroup eventGroup) {
     _eventGroups.add(eventGroup);
+  }
+
+  void addAllEventGroups(List<EventGroup> groups) {
+    _eventGroups.addAll(groups);
   }
 
   void removeEventGroup(EventGroup eventGroup) {

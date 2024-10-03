@@ -135,9 +135,12 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
   final bool keepScrollOffset;
   final List<EventGroup> eventGroups;
 
+  final Function(int index) onColumnTap;
+
   /// Defines a single day page.
   const InternalDayViewPage({
     Key? key,
+    required this.onColumnTap,
     required this.eventGroups,
     required this.showVerticalLine,
     required this.width,
@@ -292,56 +295,73 @@ class _InternalDayViewPageState<T extends Object?>
                             widget.hourIndicatorSettings.offset -
                             widget.verticalLineOffset,
                         child: PageView.builder(
-                          itemCount: widget.eventGroups.length,
+                          itemCount: (widget.eventGroups.length / 2).ceil(),
+                          physics: ClampingScrollPhysics(),
                           itemBuilder: (context, index) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                EventGenerator<T>(
-                                  height: widget.height,
-                                  date: widget.date,
-                                  onTileLongTap: widget.onTileLongTap,
-                                  onTileDoubleTap: widget.onTileDoubleTap,
-                                  onTileTap: widget.onTileTap,
-                                  eventArranger: widget.eventArranger,
-                                  events: widget.controller.getEventsOnDay(
-                                    widget.date,
-                                    includeFullDayEvents: false,
+                            final firstIndex = index * 2;
+                            final secondIndex = firstIndex + 1;
+                            return Container(
+                              color: Color(0xffEFF1F5),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  EventGenerator<T>(
+                                    height: widget.height,
+                                    date: widget.date,
+                                    onTileLongTap: widget.onTileLongTap,
+                                    onTileDoubleTap: widget.onTileDoubleTap,
+                                    onTileTap: widget.onTileTap,
+                                    eventArranger: widget.eventArranger,
+                                    events:
+                                        widget.controller.getEventsFromGroup(
+                                      firstIndex,
+                                      widget.date,
+                                    ),
+                                    heightPerMinute: widget.heightPerMinute,
+                                    eventTileBuilder: widget.eventTileBuilder,
+                                    scrollNotifier: widget.scrollNotifier,
+                                    startHour: widget.startHour,
+                                    endHour: widget.endHour,
+                                    width: (widget.width -
+                                            widget.timeLineWidth -
+                                            widget
+                                                .hourIndicatorSettings.offset -
+                                            widget.verticalLineOffset -
+                                            8) /
+                                        2,
                                   ),
-                                  heightPerMinute: widget.heightPerMinute,
-                                  eventTileBuilder: widget.eventTileBuilder,
-                                  scrollNotifier: widget.scrollNotifier,
-                                  startHour: widget.startHour,
-                                  endHour: widget.endHour,
-                                  width: (widget.width -
-                                          widget.timeLineWidth -
-                                          widget.hourIndicatorSettings.offset -
-                                          widget.verticalLineOffset) /
-                                      2,
-                                ),
-                                EventGenerator<T>(
-                                  height: widget.height,
-                                  date: widget.date,
-                                  onTileLongTap: widget.onTileLongTap,
-                                  onTileDoubleTap: widget.onTileDoubleTap,
-                                  onTileTap: widget.onTileTap,
-                                  eventArranger: widget.eventArranger,
-                                  events: widget.controller.getEventsOnDay(
-                                    widget.date,
-                                    includeFullDayEvents: false,
+                                  Container(
+                                    width: 8,
+                                    color: Colors.white,
                                   ),
-                                  heightPerMinute: widget.heightPerMinute,
-                                  eventTileBuilder: widget.eventTileBuilder,
-                                  scrollNotifier: widget.scrollNotifier,
-                                  startHour: widget.startHour,
-                                  endHour: widget.endHour,
-                                  width: (widget.width -
-                                          widget.timeLineWidth -
-                                          widget.hourIndicatorSettings.offset -
-                                          widget.verticalLineOffset) /
-                                      2,
-                                ),
-                              ],
+                                  if (secondIndex < widget.eventGroups.length)
+                                    EventGenerator<T>(
+                                      height: widget.height,
+                                      date: widget.date,
+                                      onTileLongTap: widget.onTileLongTap,
+                                      onTileDoubleTap: widget.onTileDoubleTap,
+                                      onTileTap: widget.onTileTap,
+                                      eventArranger: widget.eventArranger,
+                                      events:
+                                          widget.controller.getEventsFromGroup(
+                                        secondIndex,
+                                        widget.date,
+                                      ),
+                                      heightPerMinute: widget.heightPerMinute,
+                                      eventTileBuilder: widget.eventTileBuilder,
+                                      scrollNotifier: widget.scrollNotifier,
+                                      startHour: widget.startHour,
+                                      endHour: widget.endHour,
+                                      width: (widget.width -
+                                              widget.timeLineWidth -
+                                              widget.hourIndicatorSettings
+                                                  .offset -
+                                              widget.verticalLineOffset -
+                                              8) /
+                                          2,
+                                    ),
+                                ],
+                              ),
                             );
                           },
                         ),

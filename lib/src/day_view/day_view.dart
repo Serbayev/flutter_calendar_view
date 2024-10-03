@@ -229,10 +229,12 @@ class DayView<T extends Object?> extends StatefulWidget {
   /// Flag to keep scrollOffset of pages on page change
   final bool keepScrollOffset;
   final List<EventGroup> eventGroups;
+  final Function(int index) onColumnTap;
 
   /// Main widget for day view.
   const DayView({
     Key? key,
+    required this.onColumnTap,
     required this.eventGroups,
     this.eventTileBuilder,
     this.dateStringBuilder,
@@ -463,6 +465,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                         return ValueListenableBuilder(
                           valueListenable: _scrollConfiguration,
                           builder: (_, __, ___) => InternalDayViewPage<T>(
+                            onColumnTap: widget.onColumnTap,
                             key: ValueKey(
                                 _hourHeight.toString() + date.toString()),
                             eventGroups: widget.eventGroups,

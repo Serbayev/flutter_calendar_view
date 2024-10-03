@@ -16,6 +16,9 @@ class DayViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DayView(
+      onColumnTap: (date) {
+        print("onColumnTap: $date");
+      },
       eventGroups: [],
       key: state,
       width: width,
